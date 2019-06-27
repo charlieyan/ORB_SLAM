@@ -30,7 +30,6 @@
 
 #include <ros/ros.h>
 
-#include "Thirdparty/g2o/g2o/types/types_seven_dof_expmap.h"
 
 namespace ORB_SLAM
 {
@@ -377,47 +376,43 @@ bool LoopClosing::ComputeSim3()
             nTotalMatches++;
     }
 
-    if(nTotalMatches>=40)
-    {
-        for(int i=0; i<nInitialCandidates; i++)
-            if(mvpEnoughConsistentCandidates[i]!=mpMatchedKF)
+    if (nTotalMatches >= 40) {
+        for (int i = 0; i < nInitialCandidates; i++)
+            if(mvpEnoughConsistentCandidates[i] != mpMatchedKF)
                 mvpEnoughConsistentCandidates[i]->SetErase();
         return true;
-    }
-    else
-    {
-        for(int i=0; i<nInitialCandidates; i++)
+    } else {
+        for (int i = 0; i < nInitialCandidates; i++)
             mvpEnoughConsistentCandidates[i]->SetErase();
         mpCurrentKF->SetErase();
         return false;
     }
-
 }
 
-void LoopClosing::CorrectLoop()
-{
+void LoopClosing::CorrectLoop() {
     // Send a stop signal to Local Mapping
     // Avoid new keyframes are inserted while correcting the loop
     mpLocalMapper->RequestStop();
 
     // Wait until Local Mapping has effectively stopped
     ros::Rate r(1e4);
-    while(ros::ok() && !mpLocalMapper->isStopped())
-    {
+    while (ros::ok() && !mpLocalMapper->isStopped()) {
         r.sleep();
     }
 
     // Ensure current keyframe is updated
     mpCurrentKF->UpdateConnections();
 
-    // Retrive keyframes connected to the current keyframe and compute corrected Sim3 pose by propagation
+    // Retrive keyframes connected to the
+    // current keyframe
+    // and compute corrected Sim3 pose by propagation
     mvpCurrentConnectedKFs = mpCurrentKF->GetVectorCovisibleKeyFrames();
     mvpCurrentConnectedKFs.push_back(mpCurrentKF);
 
+    /*
     KeyFrameAndPose CorrectedSim3, NonCorrectedSim3;
-    CorrectedSim3[mpCurrentKF]=mg2oScw;
+    CorrectedSim3[mpCurrentKF] = mg2oScw;
     cv::Mat Twc = mpCurrentKF->GetPoseInverse();
-
 
     for(vector<KeyFrame*>::iterator vit=mvpCurrentConnectedKFs.begin(), vend=mvpCurrentConnectedKFs.end(); vit!=vend; vit++)
     {
@@ -492,18 +487,15 @@ void LoopClosing::CorrectLoop()
 
     // Start Loop Fusion
     // Update matched map points and replace if duplicated
-    for(size_t i=0; i<mvpCurrentMatchedPoints.size(); i++)
-    {
-        if(mvpCurrentMatchedPoints[i])
-        {
+    for (size_t i=0; i<mvpCurrentMatchedPoints.size(); i++) {
+        if(mvpCurrentMatchedPoints[i]) {
             MapPoint* pLoopMP = mvpCurrentMatchedPoints[i];
             MapPoint* pCurMP = mpCurrentKF->GetMapPoint(i);
-            if(pCurMP)
+            if(pCurMP) {
                 pCurMP->Replace(pLoopMP);
-            else
-            {
-                mpCurrentKF->AddMapPoint(pLoopMP,i);
-                pLoopMP->AddObservation(mpCurrentKF,i);
+            } else {
+                mpCurrentKF->AddMapPoint(pLoopMP, i);
+                pLoopMP->AddObservation(mpCurrentKF, i);
                 pLoopMP->ComputeDistinctiveDescriptors();
             }
         }
@@ -552,52 +544,48 @@ void LoopClosing::CorrectLoop()
     mpMap->SetFlagAfterBA();
 
     mLastLoopKFid = mpCurrentKF->mnId;
+    */
 }
 
-void LoopClosing::SearchAndFuse(KeyFrameAndPose &CorrectedPosesMap)
-{
+void LoopClosing::SearchAndFuse(KeyFrameAndPose &CorrectedPosesMap) {
     ORBmatcher matcher(0.8);
 
-    for(KeyFrameAndPose::iterator mit=CorrectedPosesMap.begin(), mend=CorrectedPosesMap.end(); mit!=mend;mit++)
-    {
-        KeyFrame* pKF = mit->first;
+    // for (KeyFrameAndPose::iterator mit = CorrectedPosesMap.begin(),
+    //     mend = CorrectedPosesMap.end(); mit != mend; mit++) {
+    //     KeyFrame* pKF = mit->first;
 
-        g2o::Sim3 g2oScw = mit->second;
-        cv::Mat cvScw = Converter::toCvMat(g2oScw);
+    //     g2o::Sim3 g2oScw = mit->second;
+    //     cv::Mat cvScw = Converter::toCvMat(g2oScw);
 
-        matcher.Fuse(pKF,cvScw,mvpLoopMapPoints,4);
-    }
+    //     matcher.Fuse(pKF, cvScw, mvpLoopMapPoints, 4);
+    // }
 }
 
 
-void LoopClosing::RequestReset()
-{
+void LoopClosing::RequestReset() {
     {
         boost::mutex::scoped_lock lock(mMutexReset);
         mbResetRequested = true;
     }
 
     ros::Rate r(500);
-    while(ros::ok())
-    {
+    while (ros::ok()) {
         {
         boost::mutex::scoped_lock lock2(mMutexReset);
-        if(!mbResetRequested)
+        if (!mbResetRequested)
             break;
         }
         r.sleep();
     }
 }
 
-void LoopClosing::ResetIfRequested()
-{
+void LoopClosing::ResetIfRequested() {
     boost::mutex::scoped_lock lock(mMutexReset);
-    if(mbResetRequested)
-    {
+    if (mbResetRequested) {
         mlpLoopKeyFrameQueue.clear();
-        mLastLoopKFid=0;
-        mbResetRequested=false;
+        mLastLoopKFid = 0;
+        mbResetRequested = false;
     }
 }
 
-} //namespace ORB_SLAM
+}  // namespace ORB_SLAM

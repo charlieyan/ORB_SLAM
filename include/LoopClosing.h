@@ -30,26 +30,23 @@
 
 #include "KeyFrameDatabase.h"
 
-#include "Thirdparty/g2o/g2o/types/types_seven_dof_expmap.h"
+// #include "Thirdparty/g2o/g2o/types/types_seven_dof_expmap.h"
+#include "/usr/local/Cellar/g2o/2017-07-30/include/g2o/types/sim3/types_seven_dof_expmap.h"
 
-namespace ORB_SLAM
-{
+namespace ORB_SLAM {
 
 class Tracking;
 class LocalMapping;
 class KeyFrameDatabase;
 
 
-class LoopClosing
-{
-public:
+class LoopClosing {
+ public:
+    typedef pair<set<KeyFrame*>, int> ConsistentGroup;
+    typedef map<KeyFrame*, g2o::Sim3, std::less<KeyFrame*>,
+        Eigen::aligned_allocator<std::pair<const KeyFrame*, g2o::Sim3>>> KeyFrameAndPose;
 
-    typedef pair<set<KeyFrame*>,int> ConsistentGroup;    
-    typedef map<KeyFrame*,g2o::Sim3,std::less<KeyFrame*>,
-        Eigen::aligned_allocator<std::pair<const KeyFrame*, g2o::Sim3> > > KeyFrameAndPose;
-
-public:
-
+ public:
     LoopClosing(Map* pMap, KeyFrameDatabase* pDB, ORBVocabulary* pVoc);
 
     void SetTracker(Tracking* pTracker);
@@ -62,8 +59,7 @@ public:
 
     void RequestReset();
 
-protected:
-
+ protected:
     bool CheckNewKeyFrames();
 
     bool DetectLoop();

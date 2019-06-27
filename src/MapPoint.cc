@@ -22,11 +22,9 @@
 #include "ORBmatcher.h"
 #include "ros/ros.h"
 
-namespace ORB_SLAM
-{
+namespace ORB_SLAM {
 
 long unsigned int MapPoint::nNextId=0;
-
 
 MapPoint::MapPoint(const cv::Mat &Pos, KeyFrame *pRefKF, Map* pMap):
     mnFirstKFid(pRefKF->mnId), mnTrackReferenceForFrame(0), mnLastFrameSeen(0), mnBALocalForKF(0),
@@ -38,38 +36,32 @@ MapPoint::MapPoint(const cv::Mat &Pos, KeyFrame *pRefKF, Map* pMap):
     mNormalVector = cv::Mat::zeros(3,1,CV_32F);
 }
 
-void MapPoint::SetWorldPos(const cv::Mat &Pos)
-{
+void MapPoint::SetWorldPos(const cv::Mat &Pos) {
     boost::mutex::scoped_lock lock(mMutexPos);
     Pos.copyTo(mWorldPos);
 }
 
-cv::Mat MapPoint::GetWorldPos()
-{
+cv::Mat MapPoint::GetWorldPos() {
     boost::mutex::scoped_lock lock(mMutexPos);
     return mWorldPos.clone();
 }
 
-cv::Mat MapPoint::GetNormal()
-{
+cv::Mat MapPoint::GetNormal() {
     boost::mutex::scoped_lock lock(mMutexPos);
     return mNormalVector.clone();
 }
 
-KeyFrame* MapPoint::GetReferenceKeyFrame()
-{
+KeyFrame* MapPoint::GetReferenceKeyFrame() {
      boost::mutex::scoped_lock lock(mMutexFeatures);
      return mpRefKF;
 }
 
-void MapPoint::AddObservation(KeyFrame* pKF, size_t idx)
-{
+void MapPoint::AddObservation(KeyFrame* pKF, size_t idx) {
     boost::mutex::scoped_lock lock(mMutexFeatures);
-    mObservations[pKF]=idx;
+    mObservations[pKF] = idx;
 }
 
-void MapPoint::EraseObservation(KeyFrame* pKF)
-{
+void MapPoint::EraseObservation(KeyFrame* pKF) {
     bool bBad=false;
     {
         boost::mutex::scoped_lock lock(mMutexFeatures);
@@ -311,16 +303,15 @@ void MapPoint::UpdateNormalAndDepth()
     }
 }
 
-float MapPoint::GetMinDistanceInvariance()
-{
+float MapPoint::GetMinDistanceInvariance() {
     boost::mutex::scoped_lock lock(mMutexPos);
     return mfMinDistance;
 }
 
-float MapPoint::GetMaxDistanceInvariance()
-{
+float MapPoint::GetMaxDistanceInvariance() {
     boost::mutex::scoped_lock lock(mMutexPos);
     return mfMaxDistance;
 }
 
-} //namespace ORB_SLAM
+}  // namespace ORB_SLAM
+

@@ -29,25 +29,24 @@
 
 #include "Thirdparty/DBoW2/DBoW2/FeatureVector.h"
 
-#include<stdint-gcc.h>
+// #include<stdint-gcc.h>
 
 
 using namespace std;
 
-namespace ORB_SLAM
-{
+namespace ORB_SLAM {
 
 const int ORBmatcher::TH_HIGH = 100;
 const int ORBmatcher::TH_LOW = 50;
 const int ORBmatcher::HISTO_LENGTH = 30;
 
 
-ORBmatcher::ORBmatcher(float nnratio, bool checkOri): mfNNratio(nnratio), mbCheckOrientation(checkOri)
-{
+ORBmatcher::ORBmatcher(float nnratio, bool checkOri): mfNNratio(
+    nnratio), mbCheckOrientation(checkOri) {
 }
 
-int ORBmatcher::SearchByProjection(Frame &F, const vector<MapPoint*> &vpMapPoints, const float th)
-{
+int ORBmatcher::SearchByProjection(Frame &F,
+    const vector<MapPoint*> &vpMapPoints, const float th) {
     int nmatches=0;
 
     const bool bFactor = th!=1.0;

@@ -21,10 +21,15 @@
 #ifndef TRACKING_H
 #define TRACKING_H
 
-#include<opencv2/core/core.hpp>
-#include<opencv2/features2d/features2d.hpp>
 #include<sensor_msgs/Image.h>
 #include<sensor_msgs/image_encodings.h>
+#include<tf/transform_broadcaster.h>
+
+#include <string>
+#include <vector>
+
+#include<opencv2/core/core.hpp>
+#include<opencv2/features2d/features2d.hpp>
 
 #include"FramePublisher.h"
 #include"Map.h"
@@ -37,22 +42,20 @@
 #include "Initializer.h"
 #include "MapPublisher.h"
 
-#include<tf/transform_broadcaster.h>
-
-
-namespace ORB_SLAM
-{
+namespace ORB_SLAM {
 
 class FramePublisher;
 class Map;
 class LocalMapping;
 class LoopClosing;
 
-class Tracking
-{  
-
-public:
-    Tracking(ORBVocabulary* pVoc, FramePublisher* pFramePublisher, MapPublisher* pMapPublisher, Map* pMap, string strSettingPath);
+class Tracking {
+ public:
+    Tracking(
+        ORBVocabulary* pVoc,
+        FramePublisher* pFramePublisher,
+        MapPublisher* pMapPublisher,
+        Map* pMap, string strSettingPath);
 
     enum eTrackingState{
         SYSTEM_NOT_READY=-1,
@@ -102,7 +105,7 @@ protected:
     bool TrackWithMotionModel();
 
     bool RelocalisationRequested();
-    bool Relocalisation();    
+    bool Relocalisation();
 
     void UpdateReference();
     void UpdateReferencePoints();
@@ -115,73 +118,73 @@ protected:
     void CreateNewKeyFrame();
 
 
-    //Other Thread Pointers
+    // Other Thread Pointers
     LocalMapping* mpLocalMapper;
     LoopClosing* mpLoopClosing;
 
-    //ORB
+    // ORB
     ORBextractor* mpORBextractor;
     ORBextractor* mpIniORBextractor;
 
-    //BoW
+    // BoW
     ORBVocabulary* mpORBVocabulary;
     KeyFrameDatabase* mpKeyFrameDB;
 
     // Initalization
     Initializer* mpInitializer;
 
-    //Local Map
+    // Local Map
     KeyFrame* mpReferenceKF;
     std::vector<KeyFrame*> mvpLocalKeyFrames;
     std::vector<MapPoint*> mvpLocalMapPoints;
 
-    //Publishers
+    // Publishers
     FramePublisher* mpFramePublisher;
     MapPublisher* mpMapPublisher;
 
-    //Map
+    // Map
     Map* mpMap;
 
-    //Calibration matrix
+    // Calibration matrix
     cv::Mat mK;
     cv::Mat mDistCoef;
 
-    //New KeyFrame rules (according to fps)
+    // New KeyFrame rules (according to fps)
     int mMinFrames;
     int mMaxFrames;
 
-    //Current matches in frame
+    // Current matches in frame
     int mnMatchesInliers;
 
-    //Last Frame, KeyFrame and Relocalisation Info
+    // Last Frame, KeyFrame and Relocalisation Info
     KeyFrame* mpLastKeyFrame;
     Frame mLastFrame;
     unsigned int mnLastKeyFrameId;
     unsigned int mnLastRelocFrameId;
 
-    //Mutex
+    // Mutex
     boost::mutex mMutexTrack;
     boost::mutex mMutexForceRelocalisation;
 
-    //Reset
+    // Reset
     bool mbPublisherStopped;
     bool mbReseting;
     boost::mutex mMutexReset;
 
-    //Is relocalisation requested by an external thread? (loop closing)
+    // Is relocalisation requested by an external thread? (loop closing)
     bool mbForceRelocalisation;
 
-    //Motion Model
+    // Motion Model
     bool mbMotionModel;
     cv::Mat mVelocity;
 
-    //Color order (true RGB, false BGR, ignored if grayscale)
+    // Color order (true RGB, false BGR, ignored if grayscale)
     bool mbRGB;
 
     // Transfor broadcaster (for visualization in rviz)
     tf::TransformBroadcaster mTfBr;
 };
 
-} //namespace ORB_SLAM
+}  // namespace ORB_SLAM
 
-#endif // TRACKING_H
+#endif  // TRACKING_H

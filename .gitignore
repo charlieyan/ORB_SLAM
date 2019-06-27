@@ -1,0 +1,3 @@
+build/
+*.dylib
+Data/ORBvoc.txt

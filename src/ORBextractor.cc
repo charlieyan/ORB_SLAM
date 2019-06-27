@@ -63,6 +63,9 @@
 
 #include <ros/ros.h>
 
+// 2019-06-24 ADDED
+#include <opencv2/features2d.hpp>
+#include <opencv2/imgproc.hpp>
 
 using namespace cv;
 using namespace std;

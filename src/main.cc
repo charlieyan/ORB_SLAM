@@ -20,11 +20,12 @@
 
 #include<iostream>
 #include<fstream>
-#include<ros/ros.h>
-#include<ros/package.h>
-#include<boost/thread.hpp>
 
+#include<boost/thread.hpp>
 #include<opencv2/core/core.hpp>
+
+// #include<ros/ros.h>
+// #include<ros/package.h>
 
 #include "Tracking.h"
 #include "FramePublisher.h"
@@ -34,46 +35,42 @@
 #include "LoopClosing.h"
 #include "KeyFrameDatabase.h"
 #include "ORBVocabulary.h"
-
-
 #include "Converter.h"
-
 
 using namespace std;
 
-
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
     ros::init(argc, argv, "ORB_SLAM");
     ros::start();
 
     cout << endl << "ORB-SLAM Copyright (C) 2014 Raul Mur-Artal" << endl <<
-            "This program comes with ABSOLUTELY NO WARRANTY;" << endl  <<
-            "This is free software, and you are welcome to redistribute it" << endl <<
-            "under certain conditions. See LICENSE.txt." << endl;
+        "This program comes with ABSOLUTELY NO WARRANTY;" << endl  <<
+        "This is free software, and you are welcome to redistribute it" <<
+        endl << "under certain conditions. See LICENSE.txt." << endl;
 
-    if(argc != 3)
-    {
-        cerr << endl << "Usage: rosrun ORB_SLAM ORB_SLAM path_to_vocabulary path_to_settings (absolute or relative to package directory)" << endl;
+    if (argc != 3) {
+        cerr << endl << "Usage: rosrun ORB_SLAM ORB_SLAM ";
+        cerr << "path_to_vocabulary path_to_settings";
+        cerr << " (absolute or relative to package directory)" << endl;
         ros::shutdown();
         return 1;
     }
 
     // Load Settings and Check
-    string strSettingsFile = ros::package::getPath("ORB_SLAM")+"/"+argv[2];
+    // string strSettingsFile = ros::package::getPath("ORB_SLAM")+"/"+argv[2];
+    string strSettingsFile = argv[2];
 
     cv::FileStorage fsSettings(strSettingsFile.c_str(), cv::FileStorage::READ);
-    if(!fsSettings.isOpened())
-    {
-        ROS_ERROR("Wrong path to settings. Path must be absolut or relative to ORB_SLAM package directory.");
+    if (!fsSettings.isOpened()) {
+        ROS_ERROR("bad settings path, absolute / relative ORB_SLAM directory");
         ros::shutdown();
         return 1;
     }
 
-    //Create Frame Publisher for image_view
+    // Create Frame Publisher for image_view
     ORB_SLAM::FramePublisher FramePub;
 
-    //Load ORB Vocabulary
+    // Load ORB Vocabulary
    /* Old version to load vocabulary using cv::FileStorage
     string strVocFile = ros::package::getPath("ORB_SLAM")+"/"+argv[1];
     cout << endl << "Loading ORB Vocabulary. This could take a while." << endl;
@@ -87,19 +84,20 @@ int main(int argc, char **argv)
     ORB_SLAM::ORBVocabulary Vocabulary;
     Vocabulary.load(fsVoc);
     */
-    
-    // New version to load vocabulary from text file "Data/ORBvoc.txt". 
+
+    // New version to load vocabulary from text file "Data/ORBvoc.txt".
     // If you have an own .yml vocabulary, use the function
     // saveToTextFile in Thirdparty/DBoW2/DBoW2/TemplatedVocabulary.h
-    string strVocFile = ros::package::getPath("ORB_SLAM")+"/"+argv[1];
+    // string strVocFile = ros::package::getPath("ORB_SLAM")+"/"+argv[1];
+    string strVocFile = argv[1];
     cout << endl << "Loading ORB Vocabulary. This could take a while." << endl;
-    
+
     ORB_SLAM::ORBVocabulary Vocabulary;
     bool bVocLoad = Vocabulary.loadFromTextFile(strVocFile);
 
-    if(!bVocLoad)
-    {
-        cerr << "Wrong path to vocabulary. Path must be absolut or relative to ORB_SLAM package directory." << endl;
+    if (!bVocLoad) {
+        cerr << "Wrong path to vocabulary. Path must be absolut or ";
+        cerr << "relative to ORB_SLAM package directory." << endl;
         cerr << "Falied to open at: " << strVocFile << endl;
         ros::shutdown();
         return 1;
@@ -107,32 +105,35 @@ int main(int argc, char **argv)
 
     cout << "Vocabulary loaded!" << endl << endl;
 
-    //Create KeyFrame Database
+    // Create KeyFrame Database
     ORB_SLAM::KeyFrameDatabase Database(Vocabulary);
 
-    //Create the map
+    // Create the map
     ORB_SLAM::Map World;
 
     FramePub.SetMap(&World);
 
-    //Create Map Publisher for Rviz
+    // Create Map Publisher for Rviz
     ORB_SLAM::MapPublisher MapPub(&World);
 
-    //Initialize the Tracking Thread and launch
-    ORB_SLAM::Tracking Tracker(&Vocabulary, &FramePub, &MapPub, &World, strSettingsFile);
-    boost::thread trackingThread(&ORB_SLAM::Tracking::Run,&Tracker);
+    // Initialize the Tracking Thread and launch
+    ORB_SLAM::Tracking Tracker(&Vocabulary, &FramePub,
+        &MapPub, &World, strSettingsFile);
+    boost::thread trackingThread(
+        &ORB_SLAM::Tracking::Run, &Tracker);
 
     Tracker.SetKeyFrameDatabase(&Database);
 
-    //Initialize the Local Mapping Thread and launch
+    // Initialize the Local Mapping Thread and launch
     ORB_SLAM::LocalMapping LocalMapper(&World);
-    boost::thread localMappingThread(&ORB_SLAM::LocalMapping::Run,&LocalMapper);
+    boost::thread localMappingThread(
+        &ORB_SLAM::LocalMapping::Run, &LocalMapper);
 
-    //Initialize the Loop Closing Thread and launch
+    // Initialize the Loop Closing Thread and launch
     ORB_SLAM::LoopClosing LoopCloser(&World, &Database, &Vocabulary);
     boost::thread loopClosingThread(&ORB_SLAM::LoopClosing::Run, &LoopCloser);
 
-    //Set pointers between threads
+    // Set pointers between threads
     Tracker.SetLocalMapper(&LocalMapper);
     Tracker.SetLoopClosing(&LoopCloser);
 
@@ -142,15 +143,16 @@ int main(int argc, char **argv)
     LoopCloser.SetTracker(&Tracker);
     LoopCloser.SetLocalMapper(&LocalMapper);
 
-    //This "main" thread will show the current processed frame and publish the map
+    // This "main" thread will show the current
+    // processed frame and publish the map
     float fps = fsSettings["Camera.fps"];
-    if(fps==0)
-        fps=30;
+    if (fps == 0) {
+        fps = 30;
+    }
 
     ros::Rate r(fps);
 
-    while (ros::ok())
-    {
+    while (ros::ok()) {
         FramePub.Refresh();
         MapPub.Refresh();
         Tracker.CheckResetByPublishers();
@@ -161,30 +163,35 @@ int main(int argc, char **argv)
     ofstream f;
 
     vector<ORB_SLAM::KeyFrame*> vpKFs = World.GetAllKeyFrames();
-    sort(vpKFs.begin(),vpKFs.end(),ORB_SLAM::KeyFrame::lId);
+    sort(vpKFs.begin(), vpKFs.end(), ORB_SLAM::KeyFrame::lId);
 
-    cout << endl << "Saving Keyframe Trajectory to KeyFrameTrajectory.txt" << endl;
-    string strFile = ros::package::getPath("ORB_SLAM")+"/"+"KeyFrameTrajectory.txt";
+    cout << "\nSaving Keyframe Trajectory to KeyFrameTrajectory.txt" << endl;
+
+    // string strFile = ros::package::getPath(
+    //     "ORB_SLAM")+"/"+"KeyFrameTrajectory.txt";
+    string strFile = "./KeyFrameTrajectory.txt";
+
     f.open(strFile.c_str());
     f << fixed;
 
-    for(size_t i=0; i<vpKFs.size(); i++)
-    {
+    for (size_t i = 0; i < vpKFs.size(); i++) {
         ORB_SLAM::KeyFrame* pKF = vpKFs[i];
 
-        if(pKF->isBad())
+        if (pKF->isBad())
             continue;
 
         cv::Mat R = pKF->GetRotation().t();
         vector<float> q = ORB_SLAM::Converter::toQuaternion(R);
         cv::Mat t = pKF->GetCameraCenter();
-        f << setprecision(6) << pKF->mTimeStamp << setprecision(7) << " " << t.at<float>(0) << " " << t.at<float>(1) << " " << t.at<float>(2)
+        f << setprecision(6) << pKF->mTimeStamp <<
+            setprecision(7) << " " << t.at<float>(0)
+            << " " << t.at<float>(1) << " " << t.at<float>(2)
           << " " << q[0] << " " << q[1] << " " << q[2] << " " << q[3] << endl;
-
     }
+
     f.close();
 
     ros::shutdown();
 
-	return 0;
+    return 0;
 }

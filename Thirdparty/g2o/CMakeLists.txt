@@ -6,6 +6,8 @@ PROJECT(g2o)
 SET(g2o_C_FLAGS)
 SET(g2o_CXX_FLAGS)
 
+add_compile_options(-std=c++11)
+
 # default built type
 IF(NOT CMAKE_BUILD_TYPE)
   SET(CMAKE_BUILD_TYPE Release)
@@ -83,7 +85,12 @@ INCLUDE_DIRECTORIES(
 ${g2o_SOURCE_DIR}/core
 ${g2o_SOURCE_DIR}/types
 ${g2o_SOURCE_DIR}/stuff 
-${G2O_EIGEN3_INCLUDE})
+${G2O_EIGEN3_INCLUDE}
+
+
+# /usr/local/Cellar/gcc/9.1.0/include/c++/9.1.0/ # 2019-06-16 ADDED
+# /usr/local/Cellar/gcc/9.1.0/include/c++/9.1.0/x86_64-apple-darwin18/ # 2019-06-16 ADDED
+)
 
 # Include the subdirectories
 ADD_LIBRARY(g2o ${G2O_LIB_TYPE}
