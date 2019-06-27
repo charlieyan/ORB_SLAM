@@ -540,8 +540,8 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool* pbStopFlag)
 void Optimizer::OptimizeEssentialGraph(Map* pMap, KeyFrame* pLoopKF, KeyFrame* pCurKF, g2o::Sim3 &Scurw,
                                        LoopClosing::KeyFrameAndPose &NonCorrectedSim3,
                                        LoopClosing::KeyFrameAndPose &CorrectedSim3,
-                                       map<KeyFrame *, set<KeyFrame *> > &LoopConnections)
-{
+                                       map<KeyFrame *, set<KeyFrame *> > &LoopConnections) {
+    /*
     // Setup optimizer
     g2o::SparseOptimizer optimizer;
     optimizer.setVerbose(false);
@@ -566,8 +566,7 @@ void Optimizer::OptimizeEssentialGraph(Map* pMap, KeyFrame* pLoopKF, KeyFrame* p
     const int minFeat = 100;
 
     // SET KEYFRAME VERTICES
-    for(size_t i=0, iend=vpKFs.size(); i<iend;i++)
-    {
+    for (size_t i=0, iend=vpKFs.size(); i<iend;i++) {
         KeyFrame* pKF = vpKFs[i];
         if(pKF->isBad())
             continue;
@@ -637,8 +636,7 @@ void Optimizer::OptimizeEssentialGraph(Map* pMap, KeyFrame* pLoopKF, KeyFrame* p
     }
 
     // SET NORMAL EDGES
-    for(size_t i=0, iend=vpKFs.size(); i<iend; i++)
-    {
+    for(size_t i=0, iend=vpKFs.size(); i<iend; i++) {
         KeyFrame* pKF = vpKFs[i];
 
         const int nIDi = pKF->mnId;
@@ -786,6 +784,7 @@ void Optimizer::OptimizeEssentialGraph(Map* pMap, KeyFrame* pLoopKF, KeyFrame* p
 
         pMP->UpdateNormalAndDepth();
     }
+    */
 }
 
 int Optimizer::OptimizeSim3(KeyFrame *pKF1, KeyFrame *pKF2, vector<MapPoint *> &vpMatches1, g2o::Sim3 &g2oS12, float th2)
