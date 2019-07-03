@@ -40,8 +40,8 @@
 using namespace std;
 
 int main(int argc, char **argv) {
-    ros::init(argc, argv, "ORB_SLAM");
-    ros::start();
+    // ros::init(argc, argv, "ORB_SLAM");
+    // ros::start();
 
     cout << endl << "ORB-SLAM Copyright (C) 2014 Raul Mur-Artal" << endl <<
         "This program comes with ABSOLUTELY NO WARRANTY;" << endl  <<

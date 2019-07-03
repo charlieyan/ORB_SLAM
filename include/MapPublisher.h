@@ -21,7 +21,7 @@
 #ifndef MAPPUBLISHER_H
 #define MAPPUBLISHER_H
 
-#include<ros/ros.h>
+// #include<ros/ros.h>
 #include <visualization_msgs/Marker.h>
 
 #include"Map.h"
@@ -50,8 +50,8 @@ private:
     bool isCamUpdated();
     void ResetCamFlag();
 
-    ros::NodeHandle nh;
-    ros::Publisher publisher;
+    // ros::NodeHandle nh;
+    // ros::Publisher publisher;
 
     visualization_msgs::Marker mPoints;
     visualization_msgs::Marker mReferencePoints;

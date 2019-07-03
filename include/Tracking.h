@@ -182,7 +182,7 @@ protected:
     bool mbRGB;
 
     // Transfor broadcaster (for visualization in rviz)
-    tf::TransformBroadcaster mTfBr;
+    // tf::TransformBroadcaster mTfBr;
 };
 
 }  // namespace ORB_SLAM

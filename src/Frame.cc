@@ -21,7 +21,7 @@
 #include "Frame.h"
 #include "Converter.h"
 
-#include <ros/ros.h>
+// #include <ros/ros.h>
 
 namespace ORB_SLAM
 {

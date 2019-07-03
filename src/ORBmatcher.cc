@@ -23,7 +23,7 @@
 
 #include<limits.h>
 
-#include<ros/ros.h>
+// #include<ros/ros.h>
 #include<opencv2/core/core.hpp>
 #include<opencv2/features2d/features2d.hpp>
 
@@ -236,7 +236,7 @@ int ORBmatcher::SearchByBoW(KeyFrame* pKF,Frame &F, vector<MapPoint*> &vpMapPoin
                             int bin = round(rot*factor);
                             if(bin==HISTO_LENGTH)
                                 bin=0;
-                            ROS_ASSERT(bin>=0 && bin<HISTO_LENGTH);
+                            // ROS_ASSERT(bin>=0 && bin<HISTO_LENGTH);
                             rotHist[bin].push_back(bestIdxF);
                         }
                         nmatches++;
@@ -484,7 +484,7 @@ int ORBmatcher::WindowSearch(Frame &F1, Frame &F2, int windowSize, vector<MapPoi
             int bin = round(rot*factor);
             if(bin==HISTO_LENGTH)
                 bin=0;
-            ROS_ASSERT(bin>=0 && bin<HISTO_LENGTH);
+            // ROS_ASSERT(bin>=0 && bin<HISTO_LENGTH);
             rotHist[bin].push_back(bestIdx2);
         }
     }
@@ -670,7 +670,7 @@ int ORBmatcher::SearchForInitialization(Frame &F1, Frame &F2, vector<cv::Point2f
                     int bin = round(rot*factor);
                     if(bin==HISTO_LENGTH)
                         bin=0;
-                    ROS_ASSERT(bin>=0 && bin<HISTO_LENGTH);
+                    // ROS_ASSERT(bin>=0 && bin<HISTO_LENGTH);
                     rotHist[bin].push_back(i1);
                 }
             }
@@ -802,7 +802,7 @@ int ORBmatcher::SearchByBoW(KeyFrame *pKF1, KeyFrame *pKF2, vector<MapPoint *> &
                                 int bin = round(rot*factor);
                                 if(bin==HISTO_LENGTH)
                                     bin=0;
-                                ROS_ASSERT(bin>=0 && bin<HISTO_LENGTH);
+                                // ROS_ASSERT(bin>=0 && bin<HISTO_LENGTH);
                                 rotHist[bin].push_back(idx1);
                             }
                             nmatches++;
@@ -948,31 +948,26 @@ vector<cv::KeyPoint> &vMatchedKeys1, vector<cv::KeyPoint> &vMatchedKeys2, vector
                             int bin = round(rot*factor);
                             if(bin==HISTO_LENGTH)
                                 bin=0;
-                            ROS_ASSERT(bin>=0 && bin<HISTO_LENGTH);
+                            // ROS_ASSERT(bin>=0 && bin<HISTO_LENGTH);
                             rotHist[bin].push_back(idx1);
                         }
 
                         break;
                     }
-
                 }
             }
 
             f1it++;
             f2it++;
         }
-        else if(f1it->first < f2it->first)
-        {
+        else if(f1it->first < f2it->first) {
             f1it = vFeatVec1.lower_bound(f2it->first);
-        }
-        else
-        {
+        } else {
             f2it = vFeatVec2.lower_bound(f1it->first);
         }
     }
 
-    if(mbCheckOrientation)
-    {
+    if (mbCheckOrientation) {
         int ind1=-1;
         int ind2=-1;
         int ind3=-1;
@@ -1585,7 +1580,7 @@ int ORBmatcher::SearchByProjection(Frame &CurrentFrame, const Frame &LastFrame, 
                         int bin = round(rot*factor);
                         if(bin==HISTO_LENGTH)
                             bin=0;
-                        ROS_ASSERT(bin>=0 && bin<HISTO_LENGTH);
+                        // ROS_ASSERT(bin>=0 && bin<HISTO_LENGTH);
                         rotHist[bin].push_back(bestIdx2);
                     }
                 }
@@ -1710,7 +1705,7 @@ int ORBmatcher::SearchByProjection(Frame &CurrentFrame, KeyFrame *pKF, const set
                         int bin = round(rot*factor);
                         if(bin==HISTO_LENGTH)
                             bin=0;
-                        ROS_ASSERT(bin>=0 && bin<HISTO_LENGTH);
+                        // ROS_ASSERT(bin>=0 && bin<HISTO_LENGTH);
                         rotHist[bin].push_back(bestIdx2);
                     }
                 }

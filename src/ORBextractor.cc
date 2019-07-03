@@ -61,7 +61,7 @@
 
 #include "ORBextractor.h"
 
-#include <ros/ros.h>
+// #include <ros/ros.h>
 
 // 2019-06-24 ADDED
 #include <opencv2/features2d.hpp>

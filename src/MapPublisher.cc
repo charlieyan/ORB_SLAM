@@ -106,6 +106,7 @@ MapPublisher::MapPublisher(Map* pMap):mpMap(pMap), mbCameraUpdated(false)
     mReferencePoints.color.r =1.0f;
     mReferencePoints.color.a = 1.0;
 
+    /*
     //Configure Publisher
     publisher = nh.advertise<visualization_msgs::Marker>("ORB_SLAM/Map", 10);
 
@@ -114,18 +115,16 @@ MapPublisher::MapPublisher(Map* pMap):mpMap(pMap), mbCameraUpdated(false)
     publisher.publish(mCovisibilityGraph);
     publisher.publish(mKeyFrames);
     publisher.publish(mCurrentCamera);
+    */
 }
 
-void MapPublisher::Refresh()
-{
-    if(isCamUpdated())
-    {
+void MapPublisher::Refresh() {
+    if (isCamUpdated()) {
        cv::Mat Tcw = GetCurrentCameraPose();
        PublishCurrentCamera(Tcw);
        ResetCamFlag();
     }
-    if(mpMap->isMapUpdated())
-    {
+    if(mpMap->isMapUpdated()) {
         vector<KeyFrame*> vKeyFrames = mpMap->GetAllKeyFrames();
         vector<MapPoint*> vMapPoints = mpMap->GetAllMapPoints();
         vector<MapPoint*> vRefMapPoints = mpMap->GetReferenceMapPoints();
@@ -134,31 +133,29 @@ void MapPublisher::Refresh()
         PublishKeyFrames(vKeyFrames);
 
         mpMap->ResetUpdated();
-    }    
+    }
 }
 
-void MapPublisher::PublishMapPoints(const vector<MapPoint*> &vpMPs, const vector<MapPoint*> &vpRefMPs)
-{
+void MapPublisher::PublishMapPoints(
+    const vector<MapPoint*> &vpMPs, const vector<MapPoint*> &vpRefMPs) {
     mPoints.points.clear();
     mReferencePoints.points.clear();
 
     set<MapPoint*> spRefMPs(vpRefMPs.begin(), vpRefMPs.end());
 
-    for(size_t i=0, iend=vpMPs.size(); i<iend;i++)
-    {
-        if(vpMPs[i]->isBad() || spRefMPs.count(vpMPs[i]))
+    for(size_t i = 0, iend = vpMPs.size(); i < iend; i++) {
+        if (vpMPs[i]->isBad() || spRefMPs.count(vpMPs[i]))
             continue;
         geometry_msgs::Point p;
         cv::Mat pos = vpMPs[i]->GetWorldPos();
-        p.x=pos.at<float>(0);
-        p.y=pos.at<float>(1);
-        p.z=pos.at<float>(2);
+        p.x = pos.at<float>(0);
+        p.y = pos.at<float>(1);
+        p.z = pos.at<float>(2);
 
         mPoints.points.push_back(p);
     }
 
-    for(set<MapPoint*>::iterator sit=spRefMPs.begin(), send=spRefMPs.end(); sit!=send; sit++)
-    {
+    for(set<MapPoint*>::iterator sit=spRefMPs.begin(), send=spRefMPs.end(); sit!=send; sit++) {
         if((*sit)->isBad())
             continue;
         geometry_msgs::Point p;
@@ -170,10 +167,12 @@ void MapPublisher::PublishMapPoints(const vector<MapPoint*> &vpMPs, const vector
         mReferencePoints.points.push_back(p);
     }
 
+    /*
     mPoints.header.stamp = ros::Time::now();
     mReferencePoints.header.stamp = ros::Time::now();
     publisher.publish(mPoints);
     publisher.publish(mReferencePoints);
+    */
 }
 
 void MapPublisher::PublishKeyFrames(const vector<KeyFrame*> &vpKFs)
@@ -284,9 +283,11 @@ void MapPublisher::PublishKeyFrames(const vector<KeyFrame*> &vpKFs)
     mCovisibilityGraph.header.stamp = ros::Time::now();
     mMST.header.stamp = ros::Time::now();
 
+    /*
     publisher.publish(mKeyFrames);
     publisher.publish(mCovisibilityGraph);
     publisher.publish(mMST);
+    */
 }
 
 void MapPublisher::PublishCurrentCamera(const cv::Mat &Tcw)
@@ -343,32 +344,30 @@ void MapPublisher::PublishCurrentCamera(const cv::Mat &Tcw)
     mCurrentCamera.points.push_back(msgs_p4);
     mCurrentCamera.points.push_back(msgs_p1);
 
+    /*
     mCurrentCamera.header.stamp = ros::Time::now();
 
     publisher.publish(mCurrentCamera);
+    */
 }
 
-void MapPublisher::SetCurrentCameraPose(const cv::Mat &Tcw)
-{
+void MapPublisher::SetCurrentCameraPose(const cv::Mat &Tcw) {
     boost::mutex::scoped_lock lock(mMutexCamera);
     mCameraPose = Tcw.clone();
     mbCameraUpdated = true;
 }
 
-cv::Mat MapPublisher::GetCurrentCameraPose()
-{
+cv::Mat MapPublisher::GetCurrentCameraPose() {
     boost::mutex::scoped_lock lock(mMutexCamera);
     return mCameraPose.clone();
 }
 
-bool MapPublisher::isCamUpdated()
-{
+bool MapPublisher::isCamUpdated() {
     boost::mutex::scoped_lock lock(mMutexCamera);
     return mbCameraUpdated;
 }
 
-void MapPublisher::ResetCamFlag()
-{
+void MapPublisher::ResetCamFlag() {
     boost::mutex::scoped_lock lock(mMutexCamera);
     mbCameraUpdated = false;
 }

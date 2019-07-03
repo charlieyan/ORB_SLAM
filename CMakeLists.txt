@@ -39,17 +39,15 @@ include_directories(
   /usr/local/Cellar/g2o/2017-07-30/include/ # 2019-06-20 ADDED
 )
 
-add_executable(${PROJECT_NAME}
-  src/main.cc
+add_library(${PROJECT_NAME}
+  # src/main.cc
   src/Tracking.cc
   src/LocalMapping.cc
   src/LoopClosing.cc
   src/ORBextractor.cc
   src/ORBmatcher.cc
   src/FramePublisher.cc
-
   src/Converter.cc
-
   src/MapPoint.cc
   src/KeyFrame.cc
   src/Map.cc
@@ -66,11 +64,23 @@ add_executable(${PROJECT_NAME}
 # rosbuild_link_boost(${PROJECT_NAME} thread)
 
 target_link_libraries(${PROJECT_NAME}
-${OpenCV_LIBS}
-${EIGEN3_LIBS}
-${PROJECT_SOURCE_DIR}/Thirdparty/DBoW2/lib/libDBoW2.dylib # libDBoW2.so, # 2019-06-20 in osx, compiled targets are dylibs!!!
-# ${PROJECT_SOURCE_DIR}/Thirdparty/g2o/lib/libg2o.so
-# 2019-06-20 brew install brewsci/science/g2o on mac, not from Thirdparty!
-/usr/local/lib/libg2o_core.dylib
+  ${OpenCV_LIBS}
+  ${EIGEN3_LIBS}
+  ${PROJECT_SOURCE_DIR}/Thirdparty/DBoW2/lib/libDBoW2.dylib # libDBoW2.so, # 2019-06-20 in osx, compiled targets are dylibs!!!
+  # ${PROJECT_SOURCE_DIR}/Thirdparty/g2o/lib/libg2o.so
+  # 2019-06-20 brew install brewsci/science/g2o on mac, not from Thirdparty!
+  /usr/local/lib/libg2o_core.dylib
 )
+
+set(EXECUTABLES
+  main
+)
+foreach(executable ${EXECUTABLES})
+  add_executable(${PROJECT_NAME}_${executable} src/${executable} )
+  target_link_libraries(
+    ${PROJECT_NAME}_${executable}
+    ${PROJECT_NAME}
+    ${catkin_LIBRARIES}
+  )
+endforeach()
 

@@ -28,7 +28,7 @@
 
 #include "ORBmatcher.h"
 
-#include <ros/ros.h>
+// #include <ros/ros.h>
 
 
 namespace ORB_SLAM
@@ -52,11 +52,9 @@ void LoopClosing::SetLocalMapper(LocalMapping *pLocalMapper)
 }
 
 
-void LoopClosing::Run()
-{
-
+void LoopClosing::Run() {
+    /*
     ros::Rate r(200);
-
     while(ros::ok())
     {
         // Check if there are keyframes in the queue
@@ -77,6 +75,7 @@ void LoopClosing::Run()
         ResetIfRequested();
         r.sleep();
     }
+    */
 }
 
 void LoopClosing::InsertKeyFrame(KeyFrame *pKF)
@@ -394,11 +393,13 @@ void LoopClosing::CorrectLoop() {
     // Avoid new keyframes are inserted while correcting the loop
     mpLocalMapper->RequestStop();
 
+    /*
     // Wait until Local Mapping has effectively stopped
     ros::Rate r(1e4);
     while (ros::ok() && !mpLocalMapper->isStopped()) {
         r.sleep();
     }
+    */
 
     // Ensure current keyframe is updated
     mpCurrentKF->UpdateConnections();
@@ -568,6 +569,7 @@ void LoopClosing::RequestReset() {
         mbResetRequested = true;
     }
 
+    /*
     ros::Rate r(500);
     while (ros::ok()) {
         {
@@ -577,6 +579,7 @@ void LoopClosing::RequestReset() {
         }
         r.sleep();
     }
+    */
 }
 
 void LoopClosing::ResetIfRequested() {

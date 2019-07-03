@@ -23,7 +23,7 @@
 #include "ORBmatcher.h"
 #include "Optimizer.h"
 
-#include <ros/ros.h>
+// #include <ros/ros.h>
 
 namespace ORB_SLAM
 {
@@ -43,9 +43,8 @@ void LocalMapping::SetTracker(Tracking *pTracker)
     mpTracker=pTracker;
 }
 
-void LocalMapping::Run()
-{
-
+void LocalMapping::Run() {
+    /*
     ros::Rate r(500);
     while(ros::ok())
     {
@@ -103,6 +102,7 @@ void LocalMapping::Run()
         ResetIfRequested();
         r.sleep();
     }
+    */
 }
 
 void LocalMapping::InsertKeyFrame(KeyFrame *pKF)
@@ -584,13 +584,11 @@ cv::Mat LocalMapping::SkewSymmetricMatrix(const cv::Mat &v)
                                  -v.at<float>(1),  v.at<float>(0),              0);
 }
 
-void LocalMapping::RequestReset()
-{
-    {
-        boost::mutex::scoped_lock lock(mMutexReset);
-        mbResetRequested = true;
-    }
+void LocalMapping::RequestReset() {
+    boost::mutex::scoped_lock lock(mMutexReset);
+    mbResetRequested = true;
 
+    /*
     ros::Rate r(500);
     while(ros::ok())
     {
@@ -601,17 +599,16 @@ void LocalMapping::RequestReset()
         }
         r.sleep();
     }
+    */
 }
 
-void LocalMapping::ResetIfRequested()
-{
+void LocalMapping::ResetIfRequested() {
     boost::mutex::scoped_lock lock(mMutexReset);
-    if(mbResetRequested)
-    {
+    if (mbResetRequested) {
         mlNewKeyFrames.clear();
         mlpRecentAddedMapPoints.clear();
-        mbResetRequested=false;
+        mbResetRequested = false;
     }
 }
 
-} //namespace ORB_SLAM
+}  // namespace ORB_SLAM

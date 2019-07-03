@@ -1,3 +1,4 @@
 build/
 *.dylib
 Data/ORBvoc.txt
+bin/
